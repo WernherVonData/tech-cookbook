@@ -7,6 +7,8 @@
 int main()
 {
     std::cout << "Running with updating each object separately";
+    lor::Exampler<lor::DirectApproach> direct_example("Direct demo");
+    direct_example.run();
 
     std::getchar();
     return 0;
