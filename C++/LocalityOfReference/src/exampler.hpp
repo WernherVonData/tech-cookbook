@@ -3,12 +3,14 @@
 #include <string>
 
 #include <SFML/Graphics.hpp>
+#include <plog/Log.h>
+#include <tracy/Tracy.hpp>
 
 #include "config.hpp"
 
 namespace lor
 {
-    const constexpr unsigned int COUNTER_LIMIT = 1000000;
+    const constexpr unsigned int COUNTER_LIMIT = 10000;
 
     template <typename T>
     concept ExamplerRequirements = requires(T t, float time, sf::RenderWindow &w) {
@@ -25,28 +27,35 @@ namespace lor
 
         void run()
         {
+            PLOGI << "Examples starts running";
             if (!window_.isOpen())
             {
                 std::cerr << "Failed to open a game window\n";
+                return; // Exit if window fails to open
             }
             window_.setFramerateLimit(60);
-            window_open_ = true;
             T exampleToRun;
             unsigned int counter = 0;
             sf::Clock clock;
-            while (window_open_ && counter < COUNTER_LIMIT)
+            PLOGI << "Loop is starting";
+            while (window_.isOpen() && counter < COUNTER_LIMIT)
             {
+                ZoneScopedC(tracy::Color::Red1);
+                if ((counter + 1) % 10 == 0)
+                {
+                    PLOGI << (counter + 1) << " out of " << COUNTER_LIMIT;
+                }
                 processEvents();
                 float deltaTime = clock.restart().asSeconds();
                 exampleToRun.update(deltaTime);
-                window_.clear();
+                window_.clear(sf::Color::Black);
                 exampleToRun.render(window_);
                 window_.display();
+                ++counter;
             }
         }
 
     private:
-        bool window_open_ = false;
         sf::RenderWindow window_;
 
         void processEvents()
@@ -60,9 +69,9 @@ namespace lor
                     window_.close();
                     break;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Escape && window_open_)
+                    if (event.key.code == sf::Keyboard::Escape)
                     {
-                        window_open_ = false;
+                        window_.close();
                     }
                     break;
                 default:

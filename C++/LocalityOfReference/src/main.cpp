@@ -1,4 +1,8 @@
-#include <iostream>
+
+#include <plog/Init.h>
+#include <plog/Log.h> // Include Plog
+#include <plog/Appenders/ConsoleAppender.h>
+#include <plog/Formatters/TxtFormatter.h>
 
 #include "exampler.hpp"
 #include "direct_approach.hpp"
@@ -6,10 +10,10 @@
 
 int main()
 {
-    std::cout << "Running with updating each object separately";
+    static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
+    plog::init(plog::debug, &consoleAppender);
+    PLOGI << "Mini asteroids are starting";
     lor::Exampler<lor::DirectApproach> direct_example("Direct demo");
     direct_example.run();
-
-    std::getchar();
     return 0;
 }
