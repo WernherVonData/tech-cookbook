@@ -10,7 +10,7 @@
 
 namespace lor
 {
-    const constexpr unsigned int COUNTER_LIMIT = 10000;
+    const constexpr unsigned int COUNTER_LIMIT = 5000;
 
     template <typename T>
     concept ExamplerRequirements = requires(T t, float time, sf::RenderWindow &w) {
@@ -23,7 +23,8 @@ namespace lor
     class Exampler
     {
     public:
-        Exampler(const std::string &window_title) : window_(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), window_title.c_str()) {}
+        Exampler(const std::string &window_title) : window_title_(window_title),
+                                                    window_(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), window_title.c_str()) {}
 
         void run()
         {
@@ -41,7 +42,7 @@ namespace lor
             while (window_.isOpen() && counter < COUNTER_LIMIT)
             {
                 ZoneScopedC(tracy::Color::Red1);
-                if ((counter + 1) % 10 == 0)
+                if ((counter + 1) % 100 == 0)
                 {
                     PLOGI << (counter + 1) << " out of " << COUNTER_LIMIT;
                 }
@@ -53,9 +54,14 @@ namespace lor
                 window_.display();
                 ++counter;
             }
+            if (window_.isOpen())
+            {
+                window_.close();
+            }
         }
 
     private:
+        const std::string window_title_;
         sf::RenderWindow window_;
 
         void processEvents()

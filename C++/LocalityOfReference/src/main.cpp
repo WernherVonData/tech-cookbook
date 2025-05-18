@@ -12,8 +12,10 @@ int main()
 {
     static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
     plog::init(plog::debug, &consoleAppender);
-    PLOGI << "Mini asteroids are starting";
     lor::Exampler<lor::DirectApproach> direct_example("Direct demo");
     direct_example.run();
+    lor::Exampler<lor::CpuCacheApproach> cpu_cache_example("CPU Cache Demo");
+    cpu_cache_example.run();
+
     return 0;
 }
